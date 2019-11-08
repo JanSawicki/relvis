@@ -15,7 +15,7 @@ Condition, Deontic and Method matrix are for describing relations of a particula
 
 Matrix examples for aim_category = "powołuje"
 
-Not that Condition, Deontic and Method matrix CANNOT have values in cells where Aim Matrix is empty. 
+Note that Condition, Deontic and Method matrices CANNOT have values in cells where Aim Matrix is empty. 
 But they may not have value in cells where Aim Matrix is non-empty. 
 
 		marszalek	prezydium	posel
