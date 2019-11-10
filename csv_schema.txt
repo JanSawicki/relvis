@@ -1,19 +1,20 @@
 CSV Schema
 
 Header (column names):
-article, actor, aim, aim_category, deontic, condition, method
+article, point, actor, aim, aim_category, deontic, active_condition, method
 
-Examples are made up. 
+Example sentence (Regulamin Sejmu Rzeczypospolitej, Art. 20 punkt 3)
+"Komisja powołuje i odwołuje członków prezydium w głosowaniu jawnym większością głosów"
 
 Row example:
-article, actor, aim, aim_category, deontic, active condition, method
-1, "marszalek", "wskazac", "wybiera", "musi", "w okresie 30 dni o poczatku kadencji Sejmu", ""
+article, point, actor, aim, aim_category, deontic, active_condition, method
+20, 3, "Komisja", "powołuje", "powoływać", "musi", "większością głosów", "w głosowaniu jawnym"
 
 Matrices should be created for EACH aim_category. 
 Aim matrix defines the particular aim (e.g. "wskazuje" for aim_category "powołuje")
 Condition, Deontic and Method matrix are for describing relations of a particular aim_category. 
 
-Matrix examples for aim_category = "powołuje"
+Matrix examples (made up) for aim_category = "powołuje"
 
 Note that Condition, Deontic and Method matrices CANNOT have values in cells where Aim Matrix is empty. 
 But they may not have value in cells where Aim Matrix is non-empty. 
