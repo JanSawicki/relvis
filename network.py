@@ -1,6 +1,7 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 
+
 # Elements definition
 class ELEMENT:
     PARLIMENT = "sejm"
@@ -28,7 +29,8 @@ class ELEMENT:
     PRESIDIUM_OF_COMMITTEE = "prezydium komisji"
     CHIEF_OF_COMMITTEE = "przedowniczący komisji"
     VICE_CHIEF_OF_COMMITTEE = "wiceprzedowniczący komisji"
-    
+
+
 # Relations definition
 class RELATION:
     INSTITUTES = "powołuje"
@@ -53,11 +55,11 @@ class RELATION:
 
 
 # Graph initialization
-G=nx.DiGraph()
+G = nx.DiGraph()
 
 # Relation definitions
 # Art. 1 p. 1
-G.add_edge(ELEMENT.PRESIDENT, ELEMENT.MARSHALL_SENIOR, relation=RELATION.INSTITUTES)
+G.add_edge(ELEMENT.PRESIDENT, ELEMENT.MARSHALL_SENIOR, relation=RELATION.INSTITUTES, may=True)
 # Art. 2 p. 2
 G.add_edge(ELEMENT.MARSHALL_SENIOR, ELEMENT.TEMPORARY_SECRETARY, relation=RELATION.CHOOSES)
 # Art. 4 p. 3
@@ -71,17 +73,17 @@ G.add_edge(ELEMENT.PRESIDIUM, ELEMENT.SECRETARY, relation=RELATION.SUGGESTS_CAND
 # Art. 6a
 G.add_edge(ELEMENT.PRIME_MINISTER, ELEMENT.COUNCIL_OF_MINISTERS, relation=RELATION.DEMITS)
 # Art. 7 p. 1
-G.add_edge(ELEMENT.REPRESENTATIVE, ELEMENT.COMMITTEE, relation=RELATION.IS_MEMBER, may = True)
+G.add_edge(ELEMENT.REPRESENTATIVE, ELEMENT.COMMITTEE, relation=RELATION.IS_MEMBER, may=True)
 # Art. 7 p. 3
-G.add_edge(ELEMENT.REPRESENTATIVE, ELEMENT.COUNCIL_OF_MINISTERS, relation=RELATION.IS_MEMBER, may = True)
+G.add_edge(ELEMENT.REPRESENTATIVE, ELEMENT.COUNCIL_OF_MINISTERS, relation=RELATION.IS_MEMBER, may=True)
 # Art. 7 p. 2 pdp. 2
 G.add_edge(ELEMENT.REPRESENTATIVE, ELEMENT.COMMITTEE, relation=RELATION.OBEYS_COMMANDS)
 # Art. 7 p. 8 pdp. 4
 G.add_edge(ELEMENT.MARSHALL, ELEMENT.REPRESENTATIVE, relation=RELATION.GRANTS_VACATION, may=True)
 # Art. 8 p. 1
-G.add_edge(ELEMENT.REPRESENTATIVE, ELEMENT.CLUB, relation=RELATION.IS_MEMBER, may = True)
+G.add_edge(ELEMENT.REPRESENTATIVE, ELEMENT.CLUB, relation=RELATION.IS_MEMBER, may=True)
 # Art. 8 p. 1
-G.add_edge(ELEMENT.REPRESENTATIVE, ELEMENT.CIRCLE, relation=RELATION.IS_MEMBER, may = True)
+G.add_edge(ELEMENT.REPRESENTATIVE, ELEMENT.CIRCLE, relation=RELATION.IS_MEMBER, may=True)
 # Art. 10 p. 1 pdp. 2
 G.add_edge(ELEMENT.MARSHALL, ELEMENT.PARLIMENT, relation=RELATION.REPRESENTS)
 # Art. 10 p. 1 pdp. 2
@@ -131,23 +133,36 @@ G.add_edge(ELEMENT.VICE_CHIEF_OF_COMMITTEE, ELEMENT.COMMITTEE, relation=RELATION
 G.add_edge(ELEMENT.COMMITTEE, ELEMENT.PRESIDIUM, relation=RELATION.CHOOSES)
 G.add_edge(ELEMENT.COMMITTEE, ELEMENT.PRESIDIUM, relation=RELATION.CANCELS)
 # Art. 21 p. 1
-G.add_edge(ELEMENT.PRESIDIUM, ELEMENT.REPRESENTATIVE, relation=RELATION.WARN, may = True)
+G.add_edge(ELEMENT.PRESIDIUM, ELEMENT.REPRESENTATIVE, relation=RELATION.WARN, may=True)
 # Art. 23 p. 1
-G.add_edge(ELEMENT.PRESIDIUM, ELEMENT.REPRESENTATIVE, relation=RELATION.DECREASE_DIET, may = True)
+G.add_edge(ELEMENT.PRESIDIUM, ELEMENT.REPRESENTATIVE, relation=RELATION.DECREASE_DIET, may=True)
 # Art. 24 p. 1
-G.add_edge(ELEMENT.MARSHALL, ELEMENT.REPRESENTATIVE, relation=RELATION.DECREASE_DIET, may = True)
+G.add_edge(ELEMENT.MARSHALL, ELEMENT.REPRESENTATIVE, relation=RELATION.DECREASE_DIET, may=True)
 # Art. 25 p. 1
-G.add_edge(ELEMENT.MARSHALL, ELEMENT.REPRESENTATIVE, relation=RELATION.EXCLUDE_FROM_PRECEEDINGS, may = True)
+G.add_edge(ELEMENT.MARSHALL, ELEMENT.REPRESENTATIVE, relation=RELATION.EXCLUDE_FROM_PRECEEDINGS, may=True)
 
+# Image definition
+FILE_NAME = "RelationGraph"
+GRAPH_IMAGE_SIZE = (40, 40)
+fig = plt.figure(figsize=GRAPH_IMAGE_SIZE)
 
 # Drawing the graph
-FILE_NAME = "RelationGraph"
-GRAPH_IMAGE_SIZE = (40,40)
-fig = plt.figure(figsize=GRAPH_IMAGE_SIZE)
-edge_labels = nx.get_edge_attributes(G,'relation')
+edge_labels = nx.get_edge_attributes(G, 'relation')
+edges = G.edges()
+edges = [G[u][v] for u, v in edges]
 pos = nx.planar_layout(G)
+
+collection = nx.draw_networkx_edges(G, pos, width=[1, 2])
+for i in range(0, len(collection)):
+    if "may" in edges[i].keys() and edges[i]["may"]:
+        collection[i].set_linestyle('dotted')
+    else:
+        collection[i].set_linestyle('solid')
+
 nx.draw_networkx_edge_labels(G, pos, edge_labels)
-nx.draw(G, pos, with_labels = True)
+nx.draw_networkx_nodes(G, pos)
+nx.draw_networkx_labels(G, pos)
 plt.savefig(FILE_NAME + ".svg", format="SVG")
 plt.savefig(FILE_NAME + ".png", format="PNG")
+
 plt.show()
