@@ -1,18 +1,34 @@
 CSV Schema
 
+Tagging
+
 Header (column names):
-article, point, actor, aim, aim_category, deontic, active_condition, method
+article, point, active_actor, aim, aim_category, deontic, active_condition, method, passive_actor, object
+
+aim_category - not defined yet
+active_actor - actor performing an action (aim)
+passive_actor - actor which is the object (in the common meaning, not original Institutional Grammar meaning) of the action (aim)
 
 Example sentence (Regulamin Sejmu Rzeczypospolitej, Art. 20 punkt 3)
 "Komisja powołuje i odwołuje członków prezydium w głosowaniu jawnym większością głosów"
 
 Row example:
-article, point, actor, aim, aim_category, deontic, active_condition, method
-20, 3, "Komisja", "powołuje", "powoływać", "musi", "większością głosów", "w głosowaniu jawnym"
+article, point, active_actor, aim, aim_category, deontic, active_condition, method, passive_actor
+20, 3, "Komisja", "powołuje", "powoływać", "musi", "większością głosów", "w głosowaniu jawnym", "członków prezydium"
+
+Note that actor may not always be present, e.g.: 
+"Posłowie na pierwszym posiedzeniu Sejmu składają ślubowanie według roty ustalonej w Konstytucji."
+
+Row example:
+article, point, active_actor, aim, aim_category, deontic, active_condition, method, passive_actor
+2, 1, "Posłowie", "składają", "składać", "musi", "", "na pierwszym posiedzeniu Sejmu według roty ustalonej w Konstytucji", ""
+
+Matrices
 
 Matrices should be created for EACH aim_category. 
 Aim matrix defines the particular aim (e.g. "wskazuje" for aim_category "powołuje")
 Condition, Deontic and Method matrix are for describing relations of a particular aim_category. 
+First column described the active_actor, first row passive_actor.
 
 Matrix examples (made up) for aim_category = "powołuje"
 
@@ -26,7 +42,7 @@ posel		powołuje	-		-
 
 Deontic matrix
 
-		marszalek	prezydium	posel
+		marszalek	prezydium	poseł
 marszalek	-		musi		powinien
 prezydium	-		-		powinien
 posel		moze		-		-
