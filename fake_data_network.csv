@@ -1,5 +1,0 @@
-sentence_num, active_actor, aim, aim_category, deontic, active_condition, method, passive_actor, object
-1, "active_actor 1", "aim 1", "aim category 1", "deontic 1", "active_condition 1", "method 1", "passive_actor 2", "object 1"
-2, "active_actor 1", "aim 2", "aim category 2", "deontic 1", "active_condition 1", "method 1", "passive_actor 3", "object 1"
-3, "active_actor 1", "aim 2", "aim category 2", "deontic 1", "active_condition 1", "method 1", "passive_actor 3", "object 1"
-4, "active_actor 3", "aim 2", "aim category 2", "deontic 1", "active_condition 1", "method 1", "passive_actor 4", "object 1"
