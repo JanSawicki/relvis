@@ -1,10 +1,8 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 
-
 # CSV columns:
 # sentence_num, active_actor, aim, aim_category, deontic, active_condition, method, passive_actor, object
-
 
 # Graph initialization
 G = nx.DiGraph()
@@ -13,7 +11,7 @@ G = nx.DiGraph()
 # G.add_edge("person 1", "person 2", relation="relation 1")
 
 # Image definition
-FILE_NAME = "RelationGraph"
+FILE_NAME = "relvis-network"
 GRAPH_IMAGE_SIZE = (40, 40)
 fig = plt.figure(figsize=GRAPH_IMAGE_SIZE)
 

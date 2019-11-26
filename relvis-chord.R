@@ -2,15 +2,15 @@
 #devtools::install_github("mattflor/chorddiag")
 library(chorddiag)
 
-data=data.matrix(read.csv(file = "fake_data_chord.csv", row.names = 1))
+data=read.csv(file = "fake_data_chord.csv", row.names = 1)
 
 # Replace NA with 0
 data[is.na(data)] <- 0
 
 # Create diagram
-p <- chorddiag(data)
+p <- chorddiag(data.matrix(data))
 p
 
 # Save as widget
 library(htmlwidgets)
-saveWidget(p, file="relvis.html")
+saveWidget(p, file="relvis-chord.html")
