@@ -1,164 +1,194 @@
 <html>
-  <head>
-    <script
-      type="text/javascript"
-      src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"
-    ></script>
 
-    <style type="text/css">
-      #network {
-        width: 100%;
-        height: 90%;
-        border: 1px solid black;
-        text-align: center;
-      }
-    </style>
-  </head>
-  <body>
-    <div id="network"></div>
-    <input type="file" id="files" name="files[]" />
+<head>
+  <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+</head>
 
-    <script type="text/javascript">
-      document
-        .getElementById("files")
-        .addEventListener("change", handleFileSelect, false);
+<body>
+  <input type="file" id="files" name="files[]" multiple />
+  <div id="networks" style="display:flex;flex-wrap:wrap;justify-content: center;"></div>
 
-      // https://www.sitepoint.com/community/t/build-an-array-from-csv-file/234312/3
-      function parseCSV(file, delimiter, callback) {
-        var reader = new FileReader();
 
-        reader.onload = function() {
-          var lines = this.result.split("\n");
+  <script type="text/javascript">
+    document
+      .getElementById("files")
+      .addEventListener("change", handleFileSelect, false);
 
-          var result = lines.map(function(line) {
-            // Replacing /r is if the original file uses /r/n as new line
-            return line.replace(/\r/g, "").split(delimiter);
-          });
+    // https://www.sitepoint.com/community/t/build-an-array-from-csv-file/234312/3
+    function parseCSV(file, delimiter, callback) {
+      var reader = new FileReader();
 
-          callback(result);
-        };
+      reader.onload = function () {
+        var lines = this.result.split("\n").filter(function (el) {
+          return (el != null) && (el != "");
+        });;
 
-        reader.readAsText(file);
-      }
-
-      function handleFileSelect(event) {
-        var files = event.target.files; // FileList object
-
-        //for (var i = 0; i < files.length; i++) {
-        //parseCSV(files[i], ",", function(result) {
-        //  createGraph(getNodes(result), getEdges(result));
-        //});
-        //}
-
-        parseCSV(files[0], ",", function(result) {
-          createGraph(getNodes(result), getEdges(result));
+        var result = lines.map(function (line) {
+          // Replacing /r is if the original file uses /r/n as new line
+          return line.split(delimiter = delimiter)
         });
+
+        callback(result);
+      };
+
+      reader.readAsText(file);
+    }
+
+    function handleFileSelect(event) {
+      let files = event.target.files; // FileList object
+
+      for (let i = 0; i < files.length; i++) {
+        createDiv(files[i].name);
+        parseCSV(files[i], "\t", (function (result) {
+          console.log(files)
+          createGraph(files[i].name, getNodes(result), getEdges(result));
+        }));
+      }
+    }
+
+    function getNodes(array) {
+      var nodes = new Set();
+
+      for (var i = 1; i < array.length; i++) {
+        nodes.add({ id: array[i][0], label: array[i][0] });
       }
 
-      function getNodes(array) {
-        var nodes = [];
-
-        for (var i = 1; i < array.length; i++) {
-          nodes.push({ id: i, label: array[0][i] });
-        }
-
-        return nodes;
+      for (var i = 1; i < array[0].length; i++) {
+        nodes.add({ id: array[0][i], label: array[0][i] });
       }
 
-      function getEdges(array) {
-        var edges = [];
+      nodes = Array.from(nodes);
 
-        for (var i = 1; i < array.length; i++) {
-          for (var j = 1; j < array.length; j++) {
+      return nodes;
+    }
+
+    // Parsing from Python list to JSON and then to JavaScript Object
+    function parseEdgeLabel(label) {
+      labels = JSON.parse(label.replace(/{/g, "[").replace(/}/g, "]").replace(/'/g, "\""))
+      return labels
+    }
+
+    function getEdges(array) {
+      var edges = [];
+
+      for (var i = 1; i < array.length; i++) {
+        if (array[i]) {
+          for (var j = 1; j < array[0].length; j++) {
             if (array[i][j]) {
-              edges.push({ from: i, to: j, label: array[i][j] });
+              labels = parseEdgeLabel(array[i][j])
+              for (var k = 0; k < labels.length; k++) {
+                edges.push({ from: array[i][0], to: array[0][j], label: labels[k] });
+              };
             }
           }
         }
-
-        return edges;
       }
 
-      function createGraph(nodes, edges) {
-        var container = document.getElementById("network");
-        container.innerHTML = "";
+      return edges;
+    }
 
-        var data = {
-          nodes: nodes,
-          edges: edges
-        };
+    function createDiv(id) {
+      var wrappingDiv = document.createElement('div');
+      var nameDiv = document.createElement('div');
+      nameDiv.style.textAlign = "center";
+      nameDiv.innerHTML = id;
 
-        var fontOptions = {
-          color: "#ffffff",
-          size: 16, // px
-          face: "arial",
-          background: "none",
-          strokeWidth: 0, // px
-          strokeColor: "#ffffff",
-          align: "center",
-          multi: false,
-          vadjust: 0
-        };
+      var div = document.createElement('div');
+      div.id = id;
+      div.style.width = "600px";
+      div.style.height = "400px";
+      div.style.borderStyle = "solid";
+      div.style.cssFloat = "left";
+      div.style.margin = "10px"
 
-        var baseColor = "#27408b";
-        var highlightColor = "#1e90ff";
-        var transparentColor = "rgba(0,0,0,0)";
+      wrappingDiv.appendChild(nameDiv)
+      wrappingDiv.appendChild(div)
+      document.getElementById("networks").appendChild(wrappingDiv);
+    }
 
-        var options = {
-          //layout: {
-          //  randomSeed: 8
-          //},
-          physics: {
-            enabled: true,
-            barnesHut: {
-              gravitationalConstant: -1000,
-              centralGravity: 0.3,
-              springLength: 10,
-              springConstant: 0,
-              damping: 0.09,
-              avoidOverlap: 0
-            },
-            solver: "barnesHut"
+    function createGraph(id, nodes, edges) {
+      var container = document.getElementById(id);
+
+      container.innerHTML = "";
+
+      var data = {
+        nodes: nodes,
+        edges: edges
+      };
+
+      var fontOptions = {
+        color: "#ffffff",
+        size: 16, // px
+        face: "arial",
+        background: "none",
+        strokeWidth: 0, // px
+        strokeColor: "#ffffff",
+        align: "center",
+        multi: false,
+        vadjust: 0
+      };
+
+      var baseColor = "#27408b";
+      var highlightColor = "#1e90ff";
+      var transparentColor = "rgba(0,0,0,0)";
+
+      var options = {
+        //layout: {
+        //  randomSeed: 8
+        //},
+        physics: {
+          enabled: true,
+          barnesHut: {
+            gravitationalConstant: -1000,
+            centralGravity: 0.3,
+            springLength: 10,
+            springConstant: 0,
+            damping: 0.09,
+            avoidOverlap: 0
           },
-          interaction: {
-            hover: true
-          },
-          nodes: {
-            color: {
+          solver: "barnesHut"
+        },
+        interaction: {
+          hover: true
+        },
+        nodes: {
+          color: {
+            border: transparentColor,
+            background: baseColor,
+            highlight: {
               border: transparentColor,
-              background: baseColor,
-              highlight: {
-                border: transparentColor,
-                background: highlightColor
-              },
-              hover: {
-                border: transparentColor,
-                background: highlightColor
-              }
+              background: highlightColor
             },
-            font: {
-              color: "#ffffff"
+            hover: {
+              border: transparentColor,
+              background: highlightColor
             }
           },
-          edges: {
-            arrows: {
-              to: {
-                enabled: true
-              }
-            },
-            color: {
-              color: baseColor,
-              highlight: highlightColor,
-              hover: highlightColor
-            },
-            font: {
-              color: "#000000"
-            }
+          font: {
+            color: "#ffffff"
           }
-        };
+        },
+        edges: {
+          arrows: {
+            to: {
+              enabled: true
+            }
+          },
+          color: {
+            color: baseColor,
+            highlight: highlightColor,
+            hover: highlightColor
+          },
+          font: {
+            color: "#000000"
+          }
+        }
+      };
 
-        var network = new vis.Network(container, data, options);
-      }
-    </script>
-  </body>
+      var network = new vis.Network(container, data, options);
+
+    }
+  </script>
+</body>
+
 </html>
